@@ -1,0 +1,309 @@
+---
+##                       ._____.   .__
+##  _____    ____   _____|__\_ |__ |  |   ____             ____ _____    ______
+##  \__  \  /    \ /  ___/  || __ \|  | _/ __ \   ______  /    \\__  \  /  ___/
+##   / __ \|   |  \\___ \|  || \_\ \  |_\  ___/  /_____/ |   |  \/ __ \_\___ \
+##  (____  /___|  /____  >__||___  /____/\___  >         |___|  (____  /____  >
+##       \/     \/     \/        \/          \/               \/     \/     \/
+##     a n s i b l e - n a s      https://github.com/davestephens/ansible-nas
+
+# Add your all.yml config overrides to this file. See group_vars/all.yml for all possible settings.
+
+# Example options
+ansible_nas_hostname: megamind
+ansible_nas_timezone: Etc/UTC
+
+# Global settings
+docker_home: /mnt/data/docker
+
+## Enable some applications
+homepage_enabled: true
+
+# Will be added to the docker group to give user command line access to docker
+ansible_nas_user: schowell
+
+# Your email and domain, used for Let's Encrypt SSL certs
+ansible_nas_email: phonyfalcon@proton.me
+
+###
+### Samba
+###
+# The location where all shares will be created by default. Can be overridden on a per-share basis.
+# This path will be mounted to backup containers, Duplicati
+samba_shares_root: /mnt/data/smb_share
+
+# Where stuff downloaded will be stored
+downloads_root: "{{ samba_shares_root }}/downloads"
+
+# Where your movies are stored
+movies_root: "{{ samba_shares_root }}/movies"
+
+# Where your TV episodes are stored
+tv_root: "{{ samba_shares_root }}/tv"
+
+# Where music is stored
+music_root: "{{ samba_shares_root }}/music"
+
+# Where podcasts are stored
+podcasts_root: "{{ samba_shares_root }}/podcasts"
+
+# A dump for temporarily putting files before deleting them
+dump_root: "{{ samba_shares_root }}/dump"
+
+# Where games are stored
+games_root: "{{ games_shares_root }}/games"
+
+# Where your books are stored
+books_root: "{{ samba_shares_root }}/books"
+
+# Where your audiobooks are stored
+audiobooks_root: "{{ samba_shares_root }}/audiobooks"
+
+# Where your comics are stored
+comics_root: "{{ samba_shares_root }}/comics"
+
+# Where paperless_ng consumes documents
+documents_root: "{{ samba_shares_root }}/documents"
+
+# Where personal repos and code are stored
+code_root: "{{ samba_shares_root }}/code"
+
+# Where photos are stored
+photos_root: "{{ samba_shares_root }}/photos"
+
+# Where torrent files are stored (picked up by Transmission for downloading)
+torrents_root: "{{ samba_shares_root }}/torrents"
+
+# A folder for temporarily putting files for transfer purposes
+xfer_root: "{{ samba_shares_root }}/xfer"
+
+# Where roms are stored
+roms_root: "{{ samba_shares_root }}/roms"
+
+# Where video and audio recordings are stored
+recordings_root: "{{ samba_shares_root }}/recordings"
+
+# The description that'll appear next to your Ansible-NAS box when browsing your network
+samba_server_string: Megamind NAS
+
+# Users
+samba_users:
+  - name: schowell
+    password: T0n1C4t
+  - name: rahowell
+    password: laughingmosquitoes
+
+# Shares you want published over Samba.
+samba_shares:
+  ### --------- Everyone --------- ###
+  - name: downloads
+    comment: "Downloaded Files"
+    path: "{{ downloads_root }}"
+    public: yes
+    guest_ok: yes
+    browseable: yes
+    writable: yes
+
+  - name: dump
+    comment: "File dump"
+    path: "{{ samba_shares_root }}/dump"
+    public: yes
+    guest_ok: yes
+    browseable: yes
+    writable: yes
+
+  - name: documents
+    comment: "Documents"
+    path: "{{ documents_root }}"
+    public: yes
+    guest_ok: yes
+    browseable: yes
+    writable: yes
+
+  - name: xfer
+    comment: "Transfer Files"
+    guest_ok: yes
+    public: yes
+    writable: yes
+    browseable: yes
+    path: "{{ xfer_root }}"
+
+  ### --------- Parents --------- ###
+  - name: photos
+    comment: "Pictures and Photographs"
+    browseable: yes
+    group: parents
+    write_list: +parents
+    path: "{{ photos_root }}"
+
+  ### --------- Rachael --------- ###
+  - name: rachael
+    comment: "Rachael Personal Files"
+    browseable: yes
+    group: parents
+    write_list: +rahowell
+    path: "{{ samba_shares_root }}/rachael"
+
+  ### --------- Steven --------- ###
+  - name: music
+    comment: "Music"
+    valid_users: schowell
+    write_list: +schowell
+    browseable: yes
+    public: true
+    path: "{{ samba_shares_root }}/music"
+
+  - name: movies
+    comment: "Movies"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/movies"
+
+  - name: adult_movies
+    comment: "Adult Movies"
+    group: parents
+    write_list: +schowell
+    path: "{{ samba_shares_root }}/adult_movies"
+
+  - name: tv
+    comment: "TV Episodes"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/tv"
+
+  - name: podcasts
+    comment: "Podcasts"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/podcasts"
+
+  - name: games
+    comment: "Games"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/games"
+
+  - name: books
+    comment: "Books"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/books"
+
+  - name: audiobooks
+    comment: "Audiobooks"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/audiobooks"
+
+  - name: comics
+    comment: "Comics"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/comics"
+
+  - name: code
+    comment: "Code"
+    write_list: +schowell
+    valid_users: schowell
+    public: true
+    path: "{{ samba_shares_root }}/code"
+
+  - name: torrents
+    comment: "Torrent Files"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/torrents"
+
+  - name: roms
+    comment: "Rom Files"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/roms"
+
+  - name: recordings
+    comment: "Recordings"
+    valid_users: schowell
+    write_list: +schowell
+    public: true
+    path: "{{ samba_shares_root }}/recordings"
+
+###
+### NFS
+###
+# Data you want published over NFS. More info on the NFS config format can be found at
+# https://help.ubuntu.com/community/SettingUpNFSHowTo#Shares
+# WARNING: Weird things might happen if you share the same data over Samba and NFS and allow writes on both!
+
+nfs_shares_root: /mnt/data/nfs_share
+
+nfs_exports:
+  - "{{ nfs_shares_root }}/public *(rw,sync,no_root_squash)"
+
+###
+### Samba
+###
+# Seems to break browsing of the \\server-name shares root when enabled
+samba_mitigate_cve_2017_7494: false
+
+# Enable apple extensions for compatibility with apple clients
+samba_apple_extensions: yes
+
+# The account used when Samba shares are accessed. Shouldn't need to change this unless you want to
+# mess with Samba user permissions.
+samba_guest_account: ansible-nas
+
+# How Samba behaves when an unknown user connects, see Samba docs for more info
+samba_map_to_guest: Bad Password
+
+# The NetBIOS hostname used by Samba on your network
+samba_netbios_name: "{{ ansible_nas_hostname }}"
+
+###
+### Aplications
+###
+
+# # Heimdall Dashboard
+# heimdall_enabled: true
+# heimdall_port_http: 10080
+# # http://192.168.62.63:10800
+
+# # Plex Server
+# plex_enabled: true
+# # http://192.168.62.63:32400/web/index.html
+
+# Valheim Server
+valheim_enabled: true
+valheim_world: "Nyheimr"
+valheim_name: "Nyheimr"
+valheim_password: "cheese"
+valheim_public: "1"  # test turning off this setting
+valheim_auto_update: "0"
+valheim_auto_backup: "0"
+valheim_auto_update_pause_with_players: "1"
+valheim_auto_update_schedule: "0 2 * * *"
+valheim_auto_backup_pause_with_no_players: "1"
+valheim_webhook_url: "https://discord.com/api/webhooks/1379629195398873188/Eh7gYA5RHXQ8RAHIJgG4YE-0iqJVc2jQG93M-EMySMDr0WALtkRefXarFWAbz2UTa42n"
+valheim_webhook_include_public_ip: "1"
+valheim_player_event_notifications: "1"
+valheim_update_on_startup: "1"
+# valheim_enable_crossplay: "0"
+valheim_modifiers: "deathpentalty=casual"
+valheim_set_key: "playerevents"
+valheim_mods: ""  # come back to this
+# valheim_scheduled_restart: "1"
+# valheim_scheduled_restart_schedule: "0 3 * * *"
+
+# Minecraft Server
+minecraft_server_enabled: false
+
+# # Minecraft Bedrock Server
+# minecraft_bedrock_server_enabled: true
